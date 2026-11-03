@@ -153,6 +153,89 @@ int main()
 
 
 
+//7th practical 
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <string.h>
+
+int main()
+{
+    int p1[2], p2[2];
+    char filename[100];
+    char buffer[100];
+    int fd, n;
+    pid_t pid;
+
+    pipe(p1);
+    pipe(p2);
+
+    pid = fork();
+
+    if(pid > 0)
+    {
+        // P
+
+        close(p1[0]);
+        close(p2[1]);
+
+        printf("Enter file name: ");
+        scanf("%99s", filename);
+
+        write(p1[1], filename, strlen(filename) + 1);
+        close(p1[1]);
+
+        printf("\nFile contents received from child:\n");
+
+        while((n = read(p2[0], buffer, sizeof(buffer))) > 0)
+        {
+            write(STDOUT_FILENO, buffer, n);
+        }
+
+        close(p2[0]);
+
+        wait(NULL);
+    }
+    else if(pid == 0)
+    {
+        // C
+
+        close(p1[1]);
+        close(p2[0]);
+
+        read(p1[0], filename, sizeof(filename));
+        close(p1[0]);
+
+        fd = open(filename, O_RDONLY);
+
+        if(fd < 0)
+        {
+            char msg[] = "File not found!\n";
+            write(p2[1], msg, strlen(msg));
+        }
+        else
+        {
+            while((n = read(fd, buffer, sizeof(buffer))) > 0)
+            {
+                write(p2[1], buffer, n);
+            }
+
+            close(fd);
+        }
+
+        close(p2[1]);
+    }
+    else
+    {
+        printf("Fork failed!\n");
+    }
+
+    return 0;
+}
+
+
 
 
         
