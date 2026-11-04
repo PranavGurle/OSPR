@@ -238,6 +238,117 @@ int main()
 
 
 
+//2nd with zombie and orphan 
+
+
+
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+
+void sort(int a[], int n, int order)
+{
+    int i, j, temp;
+
+    for(i = 0; i < n - 1; i++)
+    {
+        for(j = 0; j < n - i - 1; j++)
+        {
+            if((order == 0 && a[j] > a[j+1]) ||
+               (order == 1 && a[j] < a[j+1]))
+            {
+                temp = a[j];
+                a[j] = a[j+1];
+                a[j+1] = temp;
+            }
+        }
+    }
+}
+
+int main()
+{
+    int a[100], n, i;
+    pid_t pid;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    printf("Enter elements: ");
+    for(i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    pid = fork();
+
+    if(pid == 0)
+    {
+        sort(a, n, 0);
+
+        printf("\nChild process - Ascending order: ");
+        for(i = 0; i < n; i++)
+            printf("%d ", a[i]);
+
+        printf("\n");
+        exit(0);
+    }
+    else if(pid > 0)
+    {
+        wait(NULL);
+
+        sort(a, n, 1);
+
+        printf("Parent process - Descending order: ");
+        for(i = 0; i < n; i++)
+            printf("%d ", a[i]);
+
+        printf("\n");
+    }
+    else
+    {
+        printf("Fork failed!\n");
+        return 1;
+    }
+
+    // ZOMBIE PROCESS
+    printf("\n--- Zombie Process Demonstration ---\n");
+
+    pid = fork();
+
+    if(pid == 0)
+    {
+        printf("Child process is exiting.\n");
+        exit(0);
+    }
+    else if(pid > 0)
+    {
+        printf("Parent sleeping for 10 seconds. Child PID: %d\n", pid);
+        sleep(10);
+        wait(NULL);
+        printf("Parent collected child status. Zombie removed.\n");
+    }
+
+    // ORPHAN PROCESS
+    printf("\n--- Orphan Process Demonstration ---\n");
+
+    pid = fork();
+
+    if(pid == 0)
+    {
+        sleep(3);
+        printf("Child is now orphan. New Parent PID: %d\n", getppid());
+    }
+    else if(pid > 0)
+    {
+        printf("Parent process is exiting.\n");
+        exit(0);
+    }
+
+    return 0;
+}
+
+
+
         
     
         
