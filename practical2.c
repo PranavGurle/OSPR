@@ -1,79 +1,202 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
+//practical 3
+import heapq
+
+# Graph representing cities and distances
+graph = {
+    'A': {'B': 4, 'C': 3},
+    'B': {'D': 5, 'E': 2},
+    'C': {'F': 7},
+    'D': {'G': 3},
+    'E': {'G': 5},
+    'F': {'G': 2},
+    'G': {}
+}
+
+# Estimated distance to destination G
+h = {
+    'A': 7,
+    'B': 5,
+    'C': 6,
+    'D': 3,
+    'E': 4,
+    'F': 2,
+    'G': 0
+}
+
+# Greedy Best First Search
+def greedy(start, goal):
+    pq = [(h[start], start, [start])]
+    visited = set()
+
+    while pq:
+        _, node, path = heapq.heappop(pq)
+
+        if node == goal:
+            return path
+
+        if node not in visited:
+            visited.add(node)
+
+            for neighbour in graph[node]:
+                if neighbour not in visited:
+                    heapq.heappush(
+                        pq, (h[neighbour], neighbour,
+                             path + [neighbour])
+                    )
+
+    return None
 
 
-int main()
-{
-    int a[20], n, i, j, temp;
-    pid_t pid;
+# A* Search
+def astar(start, goal):
+    pq = [(h[start], 0, start, [start])]
+    visited = set()
 
-    printf("Enter number of elements: ");
-    scanf("%d", &n);
+    while pq:
+        f, cost, node, path = heapq.heappop(pq)
 
-    printf("Enter elements: ");
-    for(i = 0; i<n; i++)
-        {
-            scanf("%d", &a[i]);
+        if node == goal:
+            return path, cost
+
+        if node not in visited:
+            visited.add(node)
+
+            for neighbour, distance in graph[node].items():
+                new_cost = cost + distance
+
+                heapq.heappush(
+                    pq,
+                    (new_cost + h[neighbour],
+                     new_cost,
+                     neighbour,
+                     path + [neighbour])
+                )
+
+    return None, float('inf')
+
+
+start = 'A'
+goal = 'G'
+
+print("Greedy Best First Search:")
+print(greedy(start, goal))
+
+print("\nA* Search:")
+path, cost = astar(start, goal)
+print("Path:", path)
+print("Total Cost:", cost)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// #include <stdio.h>
+// #include <unistd.h>
+// #include <sys/wait.h>
+
+
+// int main()
+// {
+//     int a[20], n, i, j, temp;
+//     pid_t pid;
+
+//     printf("Enter number of elements: ");
+//     scanf("%d", &n);
+
+//     printf("Enter elements: ");
+//     for(i = 0; i<n; i++)
+//         {
+//             scanf("%d", &a[i]);
             
-        }
-    pid = fork();
+//         }
+//     pid = fork();
 
-    if(pid == 0){
+//     if(pid == 0){
 
-        printf("\nChild process sorting in ascending order: \n");
+//         printf("\nChild process sorting in ascending order: \n");
 
-        for(i=0; i<n; i++){
-            for(j=0; j<n-i-1; j++){
+//         for(i=0; i<n; i++){
+//             for(j=0; j<n-i-1; j++){
 
-                if(a[j] > a[j+1])
-                {
-                    temp = a[j];
-                    a[j] = a[j+1];
-                    a[j+1]= temp;
-                }
-            }
-        }
-        for(i =0; i<n; i++){
-            printf("%d", a[i]);
-        }
-            printf("\nchild process completed:\n");
+//                 if(a[j] > a[j+1])
+//                 {
+//                     temp = a[j];
+//                     a[j] = a[j+1];
+//                     a[j+1]= temp;
+//                 }
+//             }
+//         }
+//         for(i =0; i<n; i++){
+//             printf("%d", a[i]);
+//         }
+//             printf("\nchild process completed:\n");
             
         
-    }
-        else if(pid > 0)
-         {
-        wait(NULL);
+//     }
+//         else if(pid > 0)
+//          {
+//         wait(NULL);
 
-        printf("\nParent process sorting in descending order:\n");
+//         printf("\nParent process sorting in descending order:\n");
 
-        for(i = 0; i< n; i++){
-            for(j=0; j<n-i-1; j++){
-                if(a[j]<a[j+1])
-                {
-                    temp= a[j];
-                    a[j] = a[j+1];
-                    a[j+1] = temp;
+//         for(i = 0; i< n; i++){
+//             for(j=0; j<n-i-1; j++){
+//                 if(a[j]<a[j+1])
+//                 {
+//                     temp= a[j];
+//                     a[j] = a[j+1];
+//                     a[j+1] = temp;
                     
-                }
-            }
-        }
-        for(i = 0; i<n; i++){
-            printf("%d", a[i]);
-        }
-            printf("\nParent process completed.\n");
+//                 }
+//             }
+//         }
+//         for(i = 0; i<n; i++){
+//             printf("%d", a[i]);
+//         }
+//             printf("\nParent process completed.\n");
             
         
-         }
-        else
-    {
-        printf("\nFork is failde\n");
-    }
+//          }
+//         else
+//     {
+//         printf("\nFork is failde\n");
+//     }
 
-      return 0;
+//       return 0;
 
         
-    }
+//     }
 
 
 
@@ -84,268 +207,268 @@ int main()
 
 
 
-//4th nd practical 
+// //4th nd practical 
 
 
-#include <stdio.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <unistd.h>
+// #include <stdio.h>
+// #include <pthread.h>
+// #include <semaphore.h>
+// #include <unistd.h>
 
-#define N 5
+// #define N 5
 
-sem_t fork_sem[N];
-sem_t room;
+// sem_t fork_sem[N];
+// sem_t room;
 
-void *philosopher(void *arg)
-{
-    int id = *(int *)arg;
+// void *philosopher(void *arg)
+// {
+//     int id = *(int *)arg;
 
-    printf("Philosopher %d is thinking\n", id);
+//     printf("Philosopher %d is thinking\n", id);
 
-    sem_wait(&room);
+//     sem_wait(&room);
 
-    sem_wait(&fork_sem[id]);
-    printf("Philosopher %d picked left fork\n", id);
+//     sem_wait(&fork_sem[id]);
+//     printf("Philosopher %d picked left fork\n", id);
 
-    sem_wait(&fork_sem[(id + 1) % N]);
-    printf("Philosopher %d picked right fork\n", id);
+//     sem_wait(&fork_sem[(id + 1) % N]);
+//     printf("Philosopher %d picked right fork\n", id);
 
-    printf("Philosopher %d is eating\n", id);
-    sleep(1);
+//     printf("Philosopher %d is eating\n", id);
+//     sleep(1);
 
-    sem_post(&fork_sem[id]);
-    sem_post(&fork_sem[(id + 1) % N]);
+//     sem_post(&fork_sem[id]);
+//     sem_post(&fork_sem[(id + 1) % N]);
 
-    sem_post(&room);
+//     sem_post(&room);
 
-    printf("Philosopher %d finished eating\n", id);
+//     printf("Philosopher %d finished eating\n", id);
 
-    return NULL;
-}
+//     return NULL;
+// }
 
-int main()
-{
-    pthread_t t[N];
-    int id[N];
+// int main()
+// {
+//     pthread_t t[N];
+//     int id[N];
 
-    sem_init(&room, 0, N - 1);
+//     sem_init(&room, 0, N - 1);
 
-    for(int i = 0; i < N; i++)
-        sem_init(&fork_sem[i], 0, 1);
+//     for(int i = 0; i < N; i++)
+//         sem_init(&fork_sem[i], 0, 1);
 
-    for(int i = 0; i < N; i++)
-    {
-        id[i] = i + 1;
-        pthread_create(&t[i], NULL, philosopher, &id[i]);
-    }
+//     for(int i = 0; i < N; i++)
+//     {
+//         id[i] = i + 1;
+//         pthread_create(&t[i], NULL, philosopher, &id[i]);
+//     }
 
-    for(int i = 0; i < N; i++)
-        pthread_join(t[i], NULL);
+//     for(int i = 0; i < N; i++)
+//         pthread_join(t[i], NULL);
 
-    for(int i = 0; i < N; i++)
-        sem_destroy(&fork_sem[i]);
+//     for(int i = 0; i < N; i++)
+//         sem_destroy(&fork_sem[i]);
 
-    sem_destroy(&room);
+//     sem_destroy(&room);
 
-    return 0;
-}
+//     return 0;
+// }
 
 
 
-//7th practical 
+// //7th practical 
 
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <string.h>
+// #include <stdio.h>
+// #include <unistd.h>
+// #include <sys/wait.h>
+// #include <fcntl.h>
+// #include <string.h>
 
-int main()
-{
-    int p1[2], p2[2];
-    char filename[100];
-    char buffer[100];
-    int fd, n;
-    pid_t pid;
+// int main()
+// {
+//     int p1[2], p2[2];
+//     char filename[100];
+//     char buffer[100];
+//     int fd, n;
+//     pid_t pid;
 
-    pipe(p1);
-    pipe(p2);
+//     pipe(p1);
+//     pipe(p2);
 
-    pid = fork();
+//     pid = fork();
 
-    if(pid > 0)
-    {
-        // P
+//     if(pid > 0)
+//     {
+//         // P
 
-        close(p1[0]);
-        close(p2[1]);
+//         close(p1[0]);
+//         close(p2[1]);
 
-        printf("Enter file name: ");
-        scanf("%99s", filename);
+//         printf("Enter file name: ");
+//         scanf("%99s", filename);
 
-        write(p1[1], filename, strlen(filename) + 1);
-        close(p1[1]);
+//         write(p1[1], filename, strlen(filename) + 1);
+//         close(p1[1]);
 
-        printf("\nFile contents received from child:\n");
+//         printf("\nFile contents received from child:\n");
 
-        while((n = read(p2[0], buffer, sizeof(buffer))) > 0)
-        {
-            write(STDOUT_FILENO, buffer, n);
-        }
+//         while((n = read(p2[0], buffer, sizeof(buffer))) > 0)
+//         {
+//             write(STDOUT_FILENO, buffer, n);
+//         }
 
-        close(p2[0]);
+//         close(p2[0]);
 
-        wait(NULL);
-    }
-    else if(pid == 0)
-    {
-        // C
+//         wait(NULL);
+//     }
+//     else if(pid == 0)
+//     {
+//         // C
 
-        close(p1[1]);
-        close(p2[0]);
+//         close(p1[1]);
+//         close(p2[0]);
 
-        read(p1[0], filename, sizeof(filename));
-        close(p1[0]);
+//         read(p1[0], filename, sizeof(filename));
+//         close(p1[0]);
 
-        fd = open(filename, O_RDONLY);
+//         fd = open(filename, O_RDONLY);
 
-        if(fd < 0)
-        {
-            char msg[] = "File not found!\n";
-            write(p2[1], msg, strlen(msg));
-        }
-        else
-        {
-            while((n = read(fd, buffer, sizeof(buffer))) > 0)
-            {
-                write(p2[1], buffer, n);
-            }
+//         if(fd < 0)
+//         {
+//             char msg[] = "File not found!\n";
+//             write(p2[1], msg, strlen(msg));
+//         }
+//         else
+//         {
+//             while((n = read(fd, buffer, sizeof(buffer))) > 0)
+//             {
+//                 write(p2[1], buffer, n);
+//             }
 
-            close(fd);
-        }
+//             close(fd);
+//         }
 
-        close(p2[1]);
-    }
-    else
-    {
-        printf("Fork failed!\n");
-    }
+//         close(p2[1]);
+//     }
+//     else
+//     {
+//         printf("Fork failed!\n");
+//     }
 
-    return 0;
-}
+//     return 0;
+// }
 
 
 
 
-//2nd with zombie and orphan 
-
-
-
-
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <stdlib.h>
-
-void sort(int a[], int n, int order)
-{
-    int i, j, temp;
-
-    for(i = 0; i < n - 1; i++)
-    {
-        for(j = 0; j < n - i - 1; j++)
-        {
-            if((order == 0 && a[j] > a[j+1]) ||
-               (order == 1 && a[j] < a[j+1]))
-            {
-                temp = a[j];
-                a[j] = a[j+1];
-                a[j+1] = temp;
-            }
-        }
-    }
-}
-
-int main()
-{
-    int a[100], n, i;
-    pid_t pid;
-
-    printf("Enter number of elements: ");
-    scanf("%d", &n);
-
-    printf("Enter elements: ");
-    for(i = 0; i < n; i++)
-        scanf("%d", &a[i]);
-
-    pid = fork();
-
-    if(pid == 0)
-    {
-        sort(a, n, 0);
-
-        printf("\nChild process - Ascending order: ");
-        for(i = 0; i < n; i++)
-            printf("%d ", a[i]);
-
-        printf("\n");
-        exit(0);
-    }
-    else if(pid > 0)
-    {
-        wait(NULL);
-
-        sort(a, n, 1);
-
-        printf("Parent process - Descending order: ");
-        for(i = 0; i < n; i++)
-            printf("%d ", a[i]);
-
-        printf("\n");
-    }
-    else
-    {
-        printf("Fork failed!\n");
-        return 1;
-    }
-
-    // ZOMBIE PROCESS
-    printf("\n--- Zombie Process Demonstration ---\n");
-
-    pid = fork();
-
-    if(pid == 0)
-    {
-        printf("Child process is exiting.\n");
-        exit(0);
-    }
-    else if(pid > 0)
-    {
-        printf("Parent sleeping for 10 seconds. Child PID: %d\n", pid);
-        sleep(10);
-        wait(NULL);
-        printf("Parent collected child status. Zombie removed.\n");
-    }
-
-    // ORPHAN PROCESS
-    printf("\n--- Orphan Process Demonstration ---\n");
-
-    pid = fork();
-
-    if(pid == 0)
-    {
-        sleep(3);
-        printf("Child is now orphan. New Parent PID: %d\n", getppid());
-    }
-    else if(pid > 0)
-    {
-        printf("Parent process is exiting.\n");
-        exit(0);
-    }
-
-    return 0;
-}
+// //2nd with zombie and orphan 
+
+
+
+
+// #include <stdio.h>
+// #include <unistd.h>
+// #include <sys/wait.h>
+// #include <stdlib.h>
+
+// void sort(int a[], int n, int order)
+// {
+//     int i, j, temp;
+
+//     for(i = 0; i < n - 1; i++)
+//     {
+//         for(j = 0; j < n - i - 1; j++)
+//         {
+//             if((order == 0 && a[j] > a[j+1]) ||
+//                (order == 1 && a[j] < a[j+1]))
+//             {
+//                 temp = a[j];
+//                 a[j] = a[j+1];
+//                 a[j+1] = temp;
+//             }
+//         }
+//     }
+// }
+
+// int main()
+// {
+//     int a[100], n, i;
+//     pid_t pid;
+
+//     printf("Enter number of elements: ");
+//     scanf("%d", &n);
+
+//     printf("Enter elements: ");
+//     for(i = 0; i < n; i++)
+//         scanf("%d", &a[i]);
+
+//     pid = fork();
+
+//     if(pid == 0)
+//     {
+//         sort(a, n, 0);
+
+//         printf("\nChild process - Ascending order: ");
+//         for(i = 0; i < n; i++)
+//             printf("%d ", a[i]);
+
+//         printf("\n");
+//         exit(0);
+//     }
+//     else if(pid > 0)
+//     {
+//         wait(NULL);
+
+//         sort(a, n, 1);
+
+//         printf("Parent process - Descending order: ");
+//         for(i = 0; i < n; i++)
+//             printf("%d ", a[i]);
+
+//         printf("\n");
+//     }
+//     else
+//     {
+//         printf("Fork failed!\n");
+//         return 1;
+//     }
+
+//     // ZOMBIE PROCESS
+//     printf("\n--- Zombie Process Demonstration ---\n");
+
+//     pid = fork();
+
+//     if(pid == 0)
+//     {
+//         printf("Child process is exiting.\n");
+//         exit(0);
+//     }
+//     else if(pid > 0)
+//     {
+//         printf("Parent sleeping for 10 seconds. Child PID: %d\n", pid);
+//         sleep(10);
+//         wait(NULL);
+//         printf("Parent collected child status. Zombie removed.\n");
+//     }
+
+//     // ORPHAN PROCESS
+//     printf("\n--- Orphan Process Demonstration ---\n");
+
+//     pid = fork();
+
+//     if(pid == 0)
+//     {
+//         sleep(3);
+//         printf("Child is now orphan. New Parent PID: %d\n", getppid());
+//     }
+//     else if(pid > 0)
+//     {
+//         printf("Parent process is exiting.\n");
+//         exit(0);
+//     }
+
+//     return 0;
+// }
 
 
 
