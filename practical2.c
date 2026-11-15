@@ -87,7 +87,21 @@ print("Path:", path)
 print("Total Cost:", cost)
 
 
+//PR 5 
+    import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+
+# 1. Load your local CSV dataset
+df = pd.read_csv("your_dataset.csv")
+
+//basic
+
+//PR 5 
 
 
 
