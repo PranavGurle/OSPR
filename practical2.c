@@ -266,9 +266,70 @@ for name, model in models.items():
 
 
 
+//PR9
 
 
+import matplotlib.pyplot as plt
 
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans, AgglomerativeClustering
+
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+# 1. Load dataset
+data = load_iris()
+X = data.data
+
+print("Dataset Loaded Successfully")
+print("First five records:")
+print(X[:5])
+
+# 2. Feature scaling
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# 3. Elbow Method
+wcss = []
+
+for k in range(1, 11):
+    model = KMeans(n_clusters=k, random_state=42, n_init=10)
+    model.fit(X_scaled)
+    wcss.append(model.inertia_)
+
+plt.plot(range(1, 11), wcss, marker='o')
+plt.title("Elbow Method")
+plt.xlabel("Number of Clusters")
+plt.ylabel("WCSS")
+plt.show()
+
+# 4. K-Means Clustering
+kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+
+kmeans_labels = kmeans.fit_predict(X_scaled)
+
+print("\nK-Means Cluster Labels:")
+print(kmeans_labels)
+
+# 5. Hierarchical Clustering
+linked = linkage(X_scaled, method='ward')
+
+plt.figure(figsize=(10, 5))
+dendrogram(linked)
+plt.title("Hierarchical Clustering Dendrogram")
+plt.xlabel("Data Points")
+plt.ylabel("Distance")
+plt.show()
+
+# 6. Apply Agglomerative Clustering
+hc = AgglomerativeClustering(n_clusters=3)
+
+hc_labels = hc.fit_predict(X_scaled)
+
+print("\nHierarchical Cluster Labels:")
+print(hc_labels)
+
+print("\nPractical Completed Successfully!")
 
 
 
