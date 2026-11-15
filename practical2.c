@@ -1,3 +1,118 @@
+//practical 1
+
+
+# Smart Home Intelligent Agent
+
+temperature = int(input("Enter room temperature: "))
+
+print("\nSmart Home Agent")
+
+if temperature > 30:
+    print("Temperature is high")
+    print("Fan is ON")
+
+elif temperature < 20:
+    print("Temperature is low")
+    print("Fan is OFF")
+
+else:
+    print("Temperature is normal")
+    print("Fan is OFF")
+
+# PEAS Representation
+print("\nPEAS Representation")
+
+print("Performance: Comfort and energy saving")
+print("Environment: Home")
+print("Actuators: Fan")
+print("Sensors: Temperature sensor")
+
+
+// practical 2
+
+from collections import deque
+import time
+
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F'],
+    'D': [],
+    'E': [],
+    'F': []
+}
+
+# Breadth First Search
+def bfs(start, goal):
+    queue = deque([[start]])
+    visited = set()
+    count = 0
+
+    while queue:
+        path = queue.popleft()
+        node = path[-1]
+
+        if node not in visited:
+            visited.add(node)
+            count += 1
+
+            if node == goal:
+                return path, count
+
+            for neighbour in graph[node]:
+                queue.append(path + [neighbour])
+
+    return None, count
+
+
+# Depth First Search
+def dfs(start, goal):
+    stack = [[start]]
+    visited = set()
+    count = 0
+
+    while stack:
+        path = stack.pop()
+        node = path[-1]
+
+        if node not in visited:
+            visited.add(node)
+            count += 1
+
+            if node == goal:
+                return path, count
+
+            for neighbour in reversed(graph[node]):
+                stack.append(path + [neighbour])
+
+    return None, count
+
+
+# Execute BFS
+start = time.time()
+path1, nodes1 = bfs('A', 'F')
+time1 = time.time() - start
+
+# Execute DFS
+start = time.time()
+path2, nodes2 = dfs('A', 'F')
+time2 = time.time() - start
+
+print("BFS Path:", path1)
+print("BFS Path Length:", len(path1) - 1)
+print("BFS Nodes Explored:", nodes1)
+print("BFS Time:", time1)
+
+print("\nDFS Path:", path2)
+print("DFS Path Length:", len(path2) - 1)
+print("DFS Nodes Explored:", nodes2)
+print("DFS Time:", time2)
+
+
+
+
+
+
 //practical 3
 import heapq
 
@@ -85,6 +200,52 @@ print("\nA* Search:")
 path, cost = astar(start, goal)
 print("Path:", path)
 print("Total Cost:", cost)
+
+
+
+//PR4
+    
+# Rule Based Expert System
+
+facts = ['fever', 'cough']
+
+rules = {
+    'flu': ['fever', 'cough'],
+    'cold': ['sneezing', 'cough']
+}
+
+# Forward Chaining
+print("Forward Chaining")
+
+for result, conditions in rules.items():
+    if all(condition in facts for condition in conditions):
+        facts.append(result)
+        print("New Fact:", result)
+
+print("Final Facts:", facts)
+
+
+# Backward Chaining
+def backward(goal):
+    if goal in facts:
+        return True
+
+    if goal in rules:
+        for condition in rules[goal]:
+            if not backward(condition):
+                return False
+        return True
+
+    return False
+
+
+print("\nBackward Chaining")
+
+if backward('flu'):
+    print("Flu condition satisfied")
+else:
+    print("Flu condition not satisfied")
+
 
 
 //PR 5 
@@ -189,6 +350,69 @@ print("Practical Completed Successfully!")
 
 
 
+//PR6
+
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import load_diabetes
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
+# Load dataset
+data = load_diabetes()
+
+X = data.data[:, 2].reshape(-1, 1)
+y = data.target
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Linear Regression
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+
+pred1 = lr.predict(X_test)
+
+# Polynomial Regression
+poly = PolynomialFeatures(degree=2)
+
+X_train_poly = poly.fit_transform(X_train)
+X_test_poly = poly.transform(X_test)
+
+pr = LinearRegression()
+pr.fit(X_train_poly, y_train)
+
+pred2 = pr.predict(X_test_poly)
+
+# Evaluation
+print("Linear Regression")
+print("MSE:", mean_squared_error(y_test, pred1))
+print("MAE:", mean_absolute_error(y_test, pred1))
+print("R2 Score:", r2_score(y_test, pred1))
+
+print("\nPolynomial Regression")
+print("MSE:", mean_squared_error(y_test, pred2))
+print("MAE:", mean_absolute_error(y_test, pred2))
+print("R2 Score:", r2_score(y_test, pred2))
+
+# Visualization
+plt.scatter(X_test, y_test)
+plt.scatter(X_test, pred1)
+plt.title("Linear Regression")
+plt.show()
+
+plt.scatter(X_test, y_test)
+plt.scatter(X_test, pred2)
+plt.title("Polynomial Regression")
+plt.show()
+
+
+
+
 
 
 //PR 7 
@@ -262,6 +486,45 @@ for name, model in models.items():
 
 
 
+//PR8
+
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+
+from sklearn.metrics import accuracy_score
+
+# Load dataset
+data = load_iris()
+
+X = data.data
+y = data.target
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Decision Tree
+dt = DecisionTreeClassifier(random_state=42)
+dt.fit(X_train, y_train)
+
+pred1 = dt.predict(X_test)
+
+print("Decision Tree Accuracy:",
+      accuracy_score(y_test, pred1))
+
+# Naive Bayes
+nb = GaussianNB()
+nb.fit(X_train, y_train)
+
+pred2 = nb.predict(X_test)
+
+print("Naive Bayes Accuracy:",
+      accuracy_score(y_test, pred2))
 
 
 
@@ -334,8 +597,156 @@ print("\nPractical Completed Successfully!")
 
 
 
+//PR10
 
 
+    
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+# Load dataset
+data = load_digits()
+
+X = data.data
+y = data.target
+
+print("Original Features:", X.shape[1])
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Feature scaling
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Classification before PCA
+model1 = SVC()
+model1.fit(X_train, y_train)
+
+pred1 = model1.predict(X_test)
+
+print("Accuracy Before PCA:",
+      accuracy_score(y_test, pred1))
+
+# Apply PCA
+pca = PCA(n_components=2)
+
+X_train_pca = pca.fit_transform(X_train)
+X_test_pca = pca.transform(X_test)
+
+print("Features After PCA:", X_train_pca.shape[1])
+
+# Classification after PCA
+model2 = SVC()
+model2.fit(X_train_pca, y_train)
+
+pred2 = model2.predict(X_test_pca)
+
+print("Accuracy After PCA:",
+      accuracy_score(y_test, pred2))
+
+# Visualization
+plt.scatter(X_train_pca[:, 0],
+            X_train_pca[:, 1],
+            c=y_train)
+
+plt.title("PCA Visualization")
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.show()
+
+print("Explained Variance:",
+      pca.explained_variance_ratio_)
+
+
+//PR11
+
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import (
+    train_test_split, cross_val_score, GridSearchCV
+)
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+
+from sklearn.metrics import accuracy_score
+
+# Load dataset
+data = load_breast_cancer()
+
+X = data.data
+y = data.target
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Feature scaling
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Create models
+models = {
+    "SVM": SVC(),
+    "Random Forest": RandomForestClassifier(random_state=42),
+    "AdaBoost": AdaBoostClassifier(random_state=42)
+}
+
+# Train and compare models
+for name, model in models.items():
+
+    model.fit(X_train, y_train)
+
+    pred = model.predict(X_test)
+
+    print("\n", name)
+    print("Accuracy:", accuracy_score(y_test, pred))
+
+# Cross Validation
+rf = RandomForestClassifier(random_state=42)
+
+scores = cross_val_score(rf, X_train, y_train, cv=5)
+
+print("\nCross Validation Scores:", scores)
+print("Average Accuracy:", scores.mean())
+
+# Grid Search
+params = {
+    'n_estimators': [50, 100],
+    'max_depth': [5, 10]
+}
+
+grid = GridSearchCV(
+    RandomForestClassifier(random_state=42),
+    params,
+    cv=3
+)
+
+grid.fit(X_train, y_train)
+
+print("\nBest Parameters:", grid.best_params_)
+
+# Optimized model
+best_model = grid.best_estimator_
+
+pred = best_model.predict(X_test)
+
+print("Accuracy After Optimization:",
+      accuracy_score(y_test, pred))
 
 
 
