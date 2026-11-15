@@ -103,6 +103,89 @@ df = pd.read_csv("your_dataset.csv")
 
 //PR 5 
 
+pip install pandas numpy matplotlib seaborn scikit-learn
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+
+# 1. Load Titanic dataset
+df = sns.load_dataset('titanic')
+
+print("First five records:")
+print(df.head())
+
+# 2. Check dataset information
+print("\nDataset Information:")
+print(df.info())
+
+# 3. Check missing values
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+# 4. Remove duplicate records
+df = df.drop_duplicates()
+
+# 5. Select useful columns
+df = df[['survived', 'pclass', 'sex',
+         'age', 'fare', 'embarked']].copy()
+
+# 6. Handle missing values
+df['age'] = df['age'].fillna(df['age'].median())
+df['fare'] = df['fare'].fillna(df['fare'].median())
+df['embarked'] = df['embarked'].fillna(
+    df['embarked'].mode()[0]
+)
+
+# 7. Encoding categorical values
+df = pd.get_dummies(df, columns=['sex', 'embarked'],
+                    drop_first=True, dtype=int)
+
+print("\nAfter Encoding:")
+print(df.head())
+
+# 8. Statistical analysis
+print("\nStatistical Analysis:")
+print(df.describe())
+
+# 9. Feature scaling
+scaler = StandardScaler()
+
+df[['age', 'fare']] = scaler.fit_transform(
+    df[['age', 'fare']]
+)
+
+print("\nAfter Feature Scaling:")
+print(df.head())
+
+# 10. Histogram
+plt.hist(df['age'], bins=20)
+plt.title("Age Distribution")
+plt.xlabel("Age")
+plt.ylabel("Frequency")
+plt.show()
+
+# 11. Boxplot
+sns.boxplot(x=df['fare'])
+plt.title("Fare Boxplot")
+plt.show()
+
+# 12. Split dataset
+X = df.drop('survived', axis=1)
+y = df['survived']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+print("\nTraining Data:", X_train.shape)
+print("Testing Data:", X_test.shape)
+print("Practical Completed Successfully!")
 
 
 
